@@ -1,0 +1,2 @@
+LogLevel VERBOSE
+AuthorizedKeysFile /etc/ssh/authorized-keys/%u

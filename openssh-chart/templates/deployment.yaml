@@ -1,0 +1,63 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  # This uses a "fullname" template (see _helpers)
+  # Basing names on .Release.Name means that the same chart can be installed
+  # multiple times into the same namespace.
+  name: {{ template "openssh.name" . }}
+  labels:
+    # The "app.kubernetes.io/managed-by" label is used to track which tool
+    # deployed a given chart. It is useful for admins who want to see what
+    # releases a particular tool is responsible for.
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    # The "app.kubernetes.io/instance" convention makes it easy to tie a release
+    # to all of the Kubernetes resources that were created as part of that
+    # release.
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    # This makes it easy to audit chart usage.
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/name: {{ template "openssh.name" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      {{- if .Values.podAnnotations }}
+      # Allows custom annotations to be specified
+      annotations:
+        {{- toYaml .Values.podAnnotations | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ template "openssh.name" . }}
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      containers:
+        - name: {{ template "openssh.name" . }}
+          image: "{{ .Values.image }}"
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          ports:
+            - name: ssh
+              containerPort: 22
+              protocol: TCP
+          # This (and the volumes section below) mount the config map as a volume.
+          volumeMounts:
+            - name: private-keys
+              mountPath: /etc/ssh
+          resources:
+            # Allow chart users to specify resources. Usually, no default should
+            # be set, so this is left to be a conscious choice to the chart
+            # users and avoids that charts don't run out of the box on, e. g.,
+            # Minikube when high resource requests are specified by default.
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.nodeSelector }}
+      nodeSelector:
+        # Node selectors can be important on mixed Windows/Linux clusters.
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: private-keys
+          secret:
+            secretName: {{ .Release.Name}}-ssh-host-rsa-key
+            items:
+              - key: ssh-host-rsa-key
+                path: ssh-host-rsa-key
+                mode: 0400
