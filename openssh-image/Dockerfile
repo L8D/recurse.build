@@ -1,7 +1,5 @@
 FROM alpine:3.7
 RUN apk add --no-cache openssh
-COPY sshd_config /etc/ssh/sshd_config
-COPY authorized-keys /etc/ssh/authorized-keys
 
 # TODO: stop doing this
 #
@@ -15,5 +13,8 @@ COPY authorized-keys /etc/ssh/authorized-keys
 #       random content. When upgrading the docker image, users will lose trust
 #       with the SSH server because of the new host key mismatch.
 RUN ssh-keygen -A
+
+COPY sshd_config /etc/ssh/sshd_config
+COPY authorized-keys /etc/ssh/authorized-keys
 
 CMD ["/usr/sbin/sshd", "-dD"]
