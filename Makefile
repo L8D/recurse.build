@@ -11,7 +11,9 @@ all: $(image_folders)
 FORCE:
 
 deploy: $(image_folders)
-	helm install ./openssh-chart
+	helm install ./openssh-chart \
+		--set service.nodePort=32222 \
+		--set image=openssh:$(tag)
 
 %-image: FORCE
 	docker build -t $*:$(tag) ./$@
