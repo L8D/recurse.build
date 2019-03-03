@@ -8,7 +8,8 @@ restartPolicy: Never
 # Evaluated by the post-install hook
 sleepyTime: "10"
 
-image: openssh:latest
+# TODO: upload openssh-image to docker hub or local registry
+# image: openssh:latest
 imagePullPolicy: IfNotPresent
 
 service:
