@@ -1,2 +1,4 @@
 LogLevel VERBOSE
 AuthorizedKeysFile /etc/ssh/authorized-keys/%u
+PasswordAuthentication no
+PubkeyAuthentication yes
