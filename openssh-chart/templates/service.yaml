@@ -13,6 +13,9 @@ spec:
     - name: ssh
       port: 22
       targetPort: ssh
+      {{- if (not (empty .Values.service.nodePort)) }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
   selector:
     app.kubernetes.io/name: {{ template "openssh.name" . }}
     app.kubernetes.io/instance: {{ .Release.Name }}
