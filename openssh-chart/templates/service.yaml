@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app.kubernetes.io/name: {{ template "openssh.name" . }}
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  name: {{ template "openssh.fullname" . }}
+spec:
+  type: LoadBalancer
+  ports:
+    - name: ssh
+      port: 22
+      targetPort: ssh
+  selector:
+    app.kubernetes.io/name: {{ template "openssh.name" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
