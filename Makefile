@@ -4,7 +4,7 @@ tag ?= latest
 image_names := openssh
 image_folders := $(image_names:%=%-image)
 
-.PHONY: all deploy reset FORCE
+.PHONY: all deploy test reset FORCE
 
 all: $(image_folders)
 
@@ -14,6 +14,10 @@ deploy: $(image_folders)
 	helm install ./openssh-chart \
 		--set service.nodePort=32222 \
 		--set image=openssh:$(tag)
+
+test: reset deploy
+	sleep 5
+	ssh -p 32222 $(shell minikube ip)
 
 %-image: FORCE
 	docker build -t $*:$(tag) ./$@
