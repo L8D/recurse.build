@@ -18,22 +18,23 @@ metadata:
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     app.kubernetes.io/name: {{ template "openssh.name" . }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.openssh.replicas }}
   template:
     metadata:
-      {{- if .Values.podAnnotations }}
+      {{- if .Values.openssh.podAnnotations }}
       # Allows custom annotations to be specified
       annotations:
-        {{- toYaml .Values.podAnnotations | nindent 8 }}
+        {{- toYaml .Values.openssh.podAnnotations | nindent 8 }}
       {{- end }}
       labels:
         app.kubernetes.io/name: {{ template "openssh.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      restartPolicy: {{ .Values.openssh.restartPolicy }}
       containers:
         - name: {{ template "openssh.name" . }}
-          image: "{{ .Values.image }}"
-          imagePullPolicy: {{ .Values.imagePullPolicy }}
+          image: "{{ .Values.openssh.image }}"
+          imagePullPolicy: {{ .Values.openssh.imagePullPolicy }}
           ports:
             - name: ssh
               containerPort: 22
@@ -43,9 +44,9 @@ spec:
             # be set, so this is left to be a conscious choice to the chart
             # users and avoids that charts don't run out of the box on, e. g.,
             # Minikube when high resource requests are specified by default.
-            {{- toYaml .Values.resources | nindent 12 }}
-      {{- if .Values.nodeSelector }}
+            {{- toYaml .Values.openssh.resources | nindent 12 }}
+      {{- if .Values.openssh.nodeSelector }}
       nodeSelector:
         # Node selectors can be important on mixed Windows/Linux clusters.
-        {{- toYaml .Values.nodeSelector | nindent 8 }}
+        {{- toYaml .Values.openssh.nodeSelector | nindent 8 }}
       {{- end }}
