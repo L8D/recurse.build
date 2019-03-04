@@ -7,9 +7,10 @@ Steps
 =====
 
 ```
+cp ~/.ssh/id_rsa.pub ./openssh-image/authorized-keys/$(whoami)
 minikube start
 helm init
 eval $(minikube docker-env)
-docker build -t openssh:latest ./openssh-image
-helm install ./openssh-chart
+make deploy
+make connect
 ```
