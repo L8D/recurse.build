@@ -24,14 +24,14 @@ deploy: $(image_folders)
 	[ ! -z "$$(helm ls local-recurse-dot-build)" ] \
 		&& helm delete local-recurse-dot-build \
 		|| true
-	helm install ./openssh-chart \
+	helm install ./rcci \
 		--replace \
 		-n local-recurse-dot-build \
 		--set service.nodePort=32222 \
 		--set image=openssh:$(tag)
 
 connect:
-	ssh local-recurse-dot-build-openssh-chart
+	ssh local-recurse-dot-build-rcci
 
 %-image: FORCE
 	docker build -t $*:$(tag) ./$@
