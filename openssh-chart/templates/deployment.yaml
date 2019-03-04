@@ -30,18 +30,6 @@ spec:
         app.kubernetes.io/name: {{ template "openssh.name" . }}
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
-      # somehow, this works even though we are not sharing volumes
-      initContainers: 
-        - name: {{ template "openssh.name" . }}-init-keys
-          image: "{{ .Values.image }}"
-          imagePullPolicy: {{ .Values.imagePullPolicy }}
-          command: ["ssh-keygen", "-A"]
-          resources:
-            # Allow chart users to specify resources. Usually, no default should
-            # be set, so this is left to be a conscious choice to the chart
-            # users and avoids that charts don't run out of the box on, e. g.,
-            # Minikube when high resource requests are specified by default.
-            {{- toYaml .Values.resources | nindent 12 }}
       containers:
         - name: {{ template "openssh.name" . }}
           image: "{{ .Values.image }}"
