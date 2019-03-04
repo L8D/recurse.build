@@ -4,7 +4,7 @@ tag ?= latest
 image_names := openssh
 image_folders := $(image_names:%=%-image)
 
-.PHONY: all logs attach-sh deploy test connect reset FORCE
+.PHONY: all logs attach-sh deploy connect FORCE
 
 all: $(image_folders)
 
@@ -21,18 +21,17 @@ attach-sh:
 		&& kubectl exec -it $$POD sh
 
 deploy: $(image_folders)
+	[ ! -z "$$(helm ls local-recurse-dot-build)" ] \
+		&& helm delete local-recurse-dot-build \
+		|| true
 	helm install ./openssh-chart \
+		--replace \
+		-n local-recurse-dot-build \
 		--set service.nodePort=32222 \
 		--set image=openssh:$(tag)
 
-test: reset deploy
-	sleep 5 && $(MAKE) connect
-
 connect:
-	ssh -p 32222 $(shell minikube ip) -i ~/.ssh/k8s_rsa
+	ssh local-recurse-dot-build-openssh-chart
 
 %-image: FORCE
 	docker build -t $*:$(tag) ./$@
-
-reset:
-	export RELEASES=$$(helm list -q) && [ ! -z "$$RELEASES" ] && helm delete $$RELEASES || true
