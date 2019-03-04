@@ -29,7 +29,7 @@ test: reset deploy
 	sleep 5 && $(MAKE) connect
 
 connect:
-	ssh -v -p 32222 $(shell minikube ip) -i ~/.ssh/k8s_rsa
+	ssh -p 32222 $(shell minikube ip) -i ~/.ssh/k8s_rsa
 
 %-image: FORCE
 	docker build -t $*:$(tag) ./$@
