@@ -4,7 +4,7 @@ metadata:
   # This uses a "fullname" template (see _helpers)
   # Basing names on .Release.Name means that the same chart can be installed
   # multiple times into the same namespace.
-  name: {{ template "openssh.name" . }}
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-git
   labels:
     # The "app.kubernetes.io/managed-by" label is used to track which tool
     # deployed a given chart. It is useful for admins who want to see what
@@ -16,7 +16,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     # This makes it easy to audit chart usage.
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    app.kubernetes.io/name: {{ template "openssh.name" . }}
+    app.kubernetes.io/name: {{ .Chart.Name }}-git
 spec:
   replicas: {{ .Values.openssh.replicas }}
   template:
@@ -27,12 +27,12 @@ spec:
         {{- toYaml .Values.openssh.podAnnotations | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ template "openssh.name" . }}
+        app.kubernetes.io/name: {{ .Chart.Name }}-git
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       restartPolicy: {{ .Values.openssh.restartPolicy }}
       containers:
-        - name: {{ template "openssh.name" . }}
+        - name: {{ .Chart.Name }}-git
           image: "{{ .Values.openssh.image }}"
           imagePullPolicy: {{ .Values.openssh.imagePullPolicy }}
           ports:

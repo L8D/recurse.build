@@ -1,7 +1,7 @@
 export SHELL := /usr/bin/env bash
 
 tag ?= latest
-image_names := openssh
+image_names := openssh worker
 image_folders := $(image_names:%=%-image)
 
 .PHONY: all logs attach-sh deploy connect FORCE
@@ -20,6 +20,9 @@ attach-sh:
 		&& [ ! -z "$$POD" ] \
 		&& kubectl exec -it $$POD sh
 
+deploy-redis:
+	helm install --name rcci-db -f values.yaml stable/redis
+
 deploy: $(image_folders)
 	[ ! -z "$$(helm ls local-recurse-dot-build)" ] \
 		&& helm delete local-recurse-dot-build \
@@ -31,7 +34,7 @@ deploy: $(image_folders)
 		--set openssh.image=openssh:$(tag)
 
 connect:
-	ssh local-recurse-dot-build-rcci-openssh
+	ssh local-recurse-dot-build-rcci-git
 
 %-image: FORCE
 	docker build -t $*:$(tag) ./$@
