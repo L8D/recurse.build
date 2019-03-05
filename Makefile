@@ -31,7 +31,7 @@ deploy: $(image_folders)
 		--set openssh.image=openssh:$(tag)
 
 connect:
-	ssh local-recurse-dot-build-rcci
+	ssh local-recurse-dot-build-rcci-openssh
 
 %-image: FORCE
 	docker build -t $*:$(tag) ./$@
