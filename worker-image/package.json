@@ -1,0 +1,12 @@
+{
+  "name": "recurse-dot-builds",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "debug": "^4.1.1",
+    "fero": "^1.7.1",
+    "koa": "^2.7.0",
+    "koa-bodyparser": "^4.2.1",
+    "koa-router": "^7.4.0"
+  }
+}
