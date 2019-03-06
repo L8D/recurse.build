@@ -1,0 +1,60 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  # This uses a "fullname" template (see _helpers)
+  # Basing names on .Release.Name means that the same chart can be installed
+  # multiple times into the same namespace.
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-users
+  labels:
+    # The "app.kubernetes.io/managed-by" label is used to track which tool
+    # deployed a given chart. It is useful for admins who want to see what
+    # releases a particular tool is responsible for.
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    # The "app.kubernetes.io/instance" convention makes it easy to tie a release
+    # to all of the Kubernetes resources that were created as part of that
+    # release.
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    # This makes it easy to audit chart usage.
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/name: {{ .Chart.Name }}-users
+spec:
+  replicas: {{ .Values.api.users.replicas }}
+  template:
+    metadata:
+      {{- if .Values.api.users.podAnnotations }}
+      # Allows custom annotations to be specified
+      annotations:
+        {{- toYaml .Values.api.users.podAnnotations | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ .Chart.Name }}-users
+        app.kubernetes.io/instance: {{ .Release.Name }}
+    spec:
+      restartPolicy: {{ .Values.api.users.restartPolicy }}
+      containers:
+        - name: {{ .Chart.Name }}-users-worker
+          image: "{{ .Values.worker.image }}"
+          imagePullPolicy: {{ .Values.worker.imagePullPolicy }}
+          command: ["node", "users"]
+          env:
+            - name: DEBUG
+              value: "*"
+          # TODO: configure port ranges for fero discovery
+          # ports:
+          #   - name: ssh
+          #     containerPort: 22
+          #     protocol: TCP
+        - name: {{ .Chart.Name }}-users-http-cache
+          image: "{{ .Values.worker.image }}"
+          imagePullPolicy: {{ .Values.worker.imagePullPolicy }}
+          command: ["node", "http-cache"]
+          env:
+            - name: TOPIC_NAME
+              value: users
+            - name: PORT
+              value: "80"
+            - name: DEBUG
+              value: "*"
+          ports:
+            - name: http
+              containerPort: 80
