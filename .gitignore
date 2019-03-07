@@ -1,9 +1,1 @@
-.DS_Store
-*.swp
-*.bak
-*.tmp
-*~
-.project
-.idea/
-*.tmproj
-.vscode/
+node_modules/
