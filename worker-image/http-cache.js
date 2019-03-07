@@ -5,7 +5,7 @@ const Koa = require('koa')
 const Router = require('koa-router')
 const bodyParser = require('koa-bodyparser')
 
-const name = process.env.TOPIC_NAME 
+const name = process.env.TOPIC_NAME
 const port = process.env.PORT
 
 if (!name) {
@@ -80,7 +80,7 @@ const makeApp = (cache) => {
 exports.makeApp = makeApp
 
 if (require.main === module) {
-  fero(name, {client: true}).then((cache) => {
+  fero(name, { client: true }).then((cache) => {
     const app = makeApp(cache)
 
     debug(`starting the server on port ${port}`)
