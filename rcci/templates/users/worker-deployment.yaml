@@ -1,0 +1,59 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  # This uses a "fullname" template (see _helpers)
+  # Basing names on .Release.Name means that the same chart can be installed
+  # multiple times into the same namespace.
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-users-worker
+  labels:
+    # The "app.kubernetes.io/managed-by" label is used to track which tool
+    # deployed a given chart. It is useful for admins who want to see what
+    # releases a particular tool is responsible for.
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    # The "app.kubernetes.io/instance" convention makes it easy to tie a release
+    # to all of the Kubernetes resources that were created as part of that
+    # release.
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    # This makes it easy to audit chart usage.
+    helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    app.kubernetes.io/name: {{ .Chart.Name }}-users-worker
+spec:
+  replicas: {{ .Values.worker.users.replicas }}
+  template:
+    metadata:
+      {{- if .Values.worker.users.podAnnotations }}
+      # Allows custom annotations to be specified
+      annotations:
+        {{- toYaml .Values.worker.users.podAnnotations | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/name: {{ .Chart.Name }}-users-worker
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        rcci/discovery: fero
+    spec:
+      restartPolicy: {{ .Values.worker.users.restartPolicy }}
+      containers:
+        - name: {{ .Chart.Name }}-users-worker
+          image: "{{ .Values.worker.image }}"
+          imagePullPolicy: {{ .Values.worker.imagePullPolicy }}
+          # command: ["node", "users"]
+          command: ["sh", "-xc", "node users --constants.hosts=$FERO_WORKER_IP"]
+          # TODO: use Helm template loops to iterate over a range of ports;
+          #       follow up on fero discovery configuration to use range.
+          #
+          #       for now, we are just using a service to handle NodePort 3131
+          ports:
+            - name: fero
+              containerPort: 3131
+          env:
+            - name: DEBUG
+              value: "*"
+            - name: FERO_WORKER_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+          # TODO: configure port ranges for fero discovery
+          # ports:
+          #   - name: ssh
+          #     containerPort: 22
+          #     protocol: TCP

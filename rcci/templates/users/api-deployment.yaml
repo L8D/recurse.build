@@ -4,7 +4,7 @@ metadata:
   # This uses a "fullname" template (see _helpers)
   # Basing names on .Release.Name means that the same chart can be installed
   # multiple times into the same namespace.
-  name: {{ .Release.Name }}-{{ .Chart.Name }}-users
+  name: {{ .Release.Name }}-{{ .Chart.Name }}-users-api
   labels:
     # The "app.kubernetes.io/managed-by" label is used to track which tool
     # deployed a given chart. It is useful for admins who want to see what
@@ -16,7 +16,7 @@ metadata:
     app.kubernetes.io/instance: {{ .Release.Name }}
     # This makes it easy to audit chart usage.
     helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
-    app.kubernetes.io/name: {{ .Chart.Name }}-users
+    app.kubernetes.io/name: {{ .Chart.Name }}-users-api
 spec:
   replicas: {{ .Values.api.users.replicas }}
   template:
@@ -27,27 +27,15 @@ spec:
         {{- toYaml .Values.api.users.podAnnotations | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/name: {{ .Chart.Name }}-users
+        app.kubernetes.io/name: {{ .Chart.Name }}-users-api
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
       restartPolicy: {{ .Values.api.users.restartPolicy }}
       containers:
-        - name: {{ .Chart.Name }}-users-worker
-          image: "{{ .Values.worker.image }}"
-          imagePullPolicy: {{ .Values.worker.imagePullPolicy }}
-          command: ["node", "users"]
-          env:
-            - name: DEBUG
-              value: "*"
-          # TODO: configure port ranges for fero discovery
-          # ports:
-          #   - name: ssh
-          #     containerPort: 22
-          #     protocol: TCP
         - name: {{ .Chart.Name }}-users-http-cache
           image: "{{ .Values.worker.image }}"
           imagePullPolicy: {{ .Values.worker.imagePullPolicy }}
-          command: ["node", "http-cache"]
+          command: ["sh", "-c", "node http-cache --constants.hosts=$FERO_WORKER_IP"]
           env:
             - name: TOPIC_NAME
               value: users
@@ -55,6 +43,10 @@ spec:
               value: "80"
             - name: DEBUG
               value: "*"
+            - name: FERO_WORKER_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           ports:
             - name: http
               containerPort: 80

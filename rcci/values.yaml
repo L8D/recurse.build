@@ -29,10 +29,11 @@ worker:
   image: worker:latest
   imagePullPolicy: IfNotPresent
 
-api:
   users:
-    replicas: 1
+    replicas: 2
     restartPolicy: Always
 
-    # Evaluated by the post-install hook
-    sleepyTime: "10"
+api:
+  users:
+    replicas: 2
+    restartPolicy: Always
