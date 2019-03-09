@@ -4,9 +4,11 @@ tag ?= latest
 image_names := openssh worker
 image_folders := $(image_names:%=%-image)
 
-.PHONY: all logs attach-sh deploy connect FORCE
+.PHONY: all logs attach-sh deploy connect FORCE images
 
-all: $(image_folders)
+all: images
+	
+images: $(image_folders)
 
 FORCE:
 
