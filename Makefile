@@ -1,7 +1,7 @@
 export SHELL := /usr/bin/env bash
 
 tag ?= latest
-image_names := openssh worker
+image_names := openssh worker http-cache-consumer
 image_folders := $(image_names:%=%-image)
 
 .PHONY: all logs attach-sh deploy connect FORCE images

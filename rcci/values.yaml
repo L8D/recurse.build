@@ -37,3 +37,7 @@ api:
   users:
     replicas: 2
     restartPolicy: Always
+
+httpCache:
+  image: http-cache-consumer:latest
+  imagePullPolicy: IfNotPresent

@@ -33,9 +33,9 @@ spec:
       restartPolicy: {{ .Values.api.users.restartPolicy }}
       containers:
         - name: {{ .Chart.Name }}-users-http-cache
-          image: "{{ .Values.worker.image }}"
-          imagePullPolicy: {{ .Values.worker.imagePullPolicy }}
-          command: ["sh", "-c", "node http-cache --constants.hosts=$FERO_WORKER_IP"]
+          image: "{{ .Values.httpCache.image }}"
+          imagePullPolicy: {{ .Values.httpCache.imagePullPolicy }}
+          command: ["sh", "-c", "node consumer --constants.hosts=$FERO_WORKER_IP"]
           env:
             - name: TOPIC_NAME
               value: users
