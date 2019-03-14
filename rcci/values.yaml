@@ -30,12 +30,12 @@ worker:
   imagePullPolicy: IfNotPresent
 
   users:
-    replicas: 2
+    replicas: 1
     restartPolicy: Always
 
 api:
   users:
-    replicas: 2
+    replicas: 1
     restartPolicy: Always
 
 httpCache:
