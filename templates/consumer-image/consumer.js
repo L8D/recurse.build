@@ -18,7 +18,7 @@ if (require.main === module) {
   (async () => {
     const fero = require('fero')
 
-    await exports.worker({
+    await exports.consumer({
       fero,
       db: {}
     })
