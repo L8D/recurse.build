@@ -17,6 +17,7 @@
     "go": "^3.0.1",
     "go-plugin-templates": "^1.0.0",
     "husky": "^1.3.1",
+    "jest": "^24.4.0",
     "lint-staged": "^8.1.5",
     "standard": "^12.0.1",
     "utilise.emitterify": "^1.8.0"
