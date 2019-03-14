@@ -39,12 +39,40 @@ spec:
             - name: ssh
               containerPort: 22
               protocol: TCP
+          # volumeMounts:
+          #   - name: userdata
+          #     subPath: home
+          #     mountPath: /home
+          #   - name: userdata
+          #     subPath: authorized-keys
+          #     mountPath: /etc/ssh/authorized-keys
           resources:
             # Allow chart users to specify resources. Usually, no default should
             # be set, so this is left to be a conscious choice to the chart
             # users and avoids that charts don't run out of the box on, e. g.,
             # Minikube when high resource requests are specified by default.
             {{- toYaml .Values.openssh.resources | nindent 12 }}
+            # - name: {{ .Chart.Name }}-users-authorized-keys-fs-consumer
+            #   image: "{{ .Values.usersAuthorizedKeysFsConsumer.image }}"
+            #   imagePullPolicy: {{ .Values.usersAuthorizedKeysFsConsumer.imagePullPolicy }}
+            #   command: ["sh", "-c", "node consumer --constants.hosts=$FERO_WORKER_IP"]
+            #   volumeMounts:
+            #     - name: userdata
+            #       subPath: home
+            #       mountPath: /home
+            #     - name: userdata
+            #       subPath: authorized-keys
+            #       mountPath: /etc/ssh/authorized-keys
+            #   env:
+            #     - name: DEBUG
+            #       value: "*"
+            #     - name: FERO_WORKER_IP
+            #       valueFrom:
+            #         fieldRef:
+            #           fieldPath: status.podIP
+      volumes:
+        - name: userdata
+          emptyDir: {}
       {{- if .Values.openssh.nodeSelector }}
       nodeSelector:
         # Node selectors can be important on mixed Windows/Linux clusters.

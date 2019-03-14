@@ -1,7 +1,7 @@
 export SHELL := /usr/bin/env bash
 
 tag ?= latest
-image_names := openssh worker
+image_names := openssh worker users-authorized-keys-fs-consumer
 image_folders := $(image_names:%=%-image)
 
 .PHONY: all logs attach-sh deploy connect FORCE images
@@ -24,6 +24,11 @@ attach-sh:
 
 deploy-redis:
 	helm install --name rcci-db -f values.yaml stable/redis
+
+redeploy: $(image_folders)
+	helm upgrade local-recurse-dot-build ./rcci \
+		--set openssh.service.nodePort=32222 \
+		--set openssh.image=openssh:$(tag)
 
 deploy: $(image_folders)
 	[ ! -z "$$(helm ls local-recurse-dot-build)" ] \

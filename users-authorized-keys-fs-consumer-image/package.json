@@ -1,0 +1,13 @@
+{
+  "name": "users-authorized-keys-fs-consumer-image",
+  "version": "1.0.0",
+  "dependencies": {
+    "debug": "^4.1.1",
+    "fero": "^1.7.1",
+    "mz": "^2.7.0"
+  },
+  "devDependencies": {
+    "docker-compose": "^0.12.0",
+    "utilise.emitterify": "^1.8.0"
+  }
+}

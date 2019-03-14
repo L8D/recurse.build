@@ -1,5 +1,6 @@
 FROM alpine:3.7
 RUN apk add --no-cache openssh
+RUN apk add --no-cache git
 
 # TODO: stop doing this
 #

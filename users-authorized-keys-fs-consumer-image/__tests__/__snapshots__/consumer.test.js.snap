@@ -1,0 +1,84 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`users-authorized-keys-fs-consumer report a complete job history when the user does not exist 1`] = `
+Array [
+  Array [
+    Object {
+      "sh": Array [
+        "adduser -D foo",
+      ],
+    },
+    Object {
+      "sh": Array [
+        "passwd foo -ud",
+      ],
+    },
+  ],
+  Array [
+    Object {
+      "writeFile": Array [
+        "/etc/ssh/authorized-keys/foo",
+        "baz",
+        Object {
+          "mode": 493,
+        },
+      ],
+    },
+    Object {
+      "sh": Array [
+        "mkdir -p -m 0700 /home/foo/.ssh",
+      ],
+    },
+    Object {
+      "writeFile": Array [
+        "/home/foo/.ssh/authorized_keys",
+        "baz",
+        Object {
+          "mode": 384,
+        },
+      ],
+    },
+    Object {
+      "sh": Array [
+        "chown -R foo /home/foo/.ssh",
+      ],
+    },
+  ],
+]
+`;
+
+exports[`users-authorized-keys-fs-consumer report a complete job history when the user exists 1`] = `
+Array [
+  true,
+  Array [
+    Object {
+      "writeFile": Array [
+        "/etc/ssh/authorized-keys/foo",
+        "baz",
+        Object {
+          "mode": 493,
+        },
+      ],
+    },
+    Object {
+      "sh": Array [
+        "mkdir -p -m 0700 /home/foo/.ssh",
+      ],
+    },
+    Object {
+      "writeFile": Array [
+        "/home/foo/.ssh/authorized_keys",
+        "baz",
+        Object {
+          "mode": 384,
+        },
+      ],
+    },
+    Object {
+      "sh": Array [
+        "chown -R foo /home/foo/.ssh",
+      ],
+    },
+  ],
+]
+`;

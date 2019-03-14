@@ -1,0 +1,15 @@
+version: '3'
+services:
+  consumer:
+    image: users-authorized-keys-fs-consumer:latest
+    build: ..
+    command: node consumer --constants.hosts=worker
+    environment:
+      DEBUG: '*'
+
+  worker:
+    image: users-authorized-keys-fs-consumer:latest
+    build: ..
+    command: "node -e require(\\'fero\\')(\\'users\\')"
+    environment:
+      DEBUG: '*'
