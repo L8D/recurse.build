@@ -15,10 +15,7 @@ RUN apk add --no-cache openssh
 RUN ssh-keygen -A
 
 COPY sshd_config /etc/ssh/sshd_config
-COPY authorized-keys /etc/ssh/authorized-keys
-RUN chmod -R 0700 /etc/ssh/authorized-keys
 WORKDIR /root
-COPY add-users.sh /root/add-users.sh
-RUN ./add-users.sh
+COPY add-user.sh /root/add-user.sh
 
 CMD ["/usr/sbin/sshd", "-dD"]
