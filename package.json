@@ -1,6 +1,12 @@
 {
   "name": "rcci",
   "private": true,
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "<rootDir>/templates/"
+    ]
+  },
   "husky": {
     "hooks": {
       "precommit": "lint-staged"
