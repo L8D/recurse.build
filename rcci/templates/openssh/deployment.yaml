@@ -30,6 +30,7 @@ spec:
         app.kubernetes.io/name: {{ .Chart.Name }}-git
         app.kubernetes.io/instance: {{ .Release.Name }}
     spec:
+      serviceAccountName: {{ .Release.Name }}-{{ .Chart.Name }}-service-account
       restartPolicy: {{ .Values.openssh.restartPolicy }}
       containers:
         - name: {{ .Chart.Name }}-git
@@ -45,6 +46,23 @@ spec:
             # users and avoids that charts don't run out of the box on, e. g.,
             # Minikube when high resource requests are specified by default.
             {{- toYaml .Values.openssh.resources | nindent 12 }}
+        - name: {{ .Chart.Name }}-users-authorized-keys-consumer
+          image: {{ .Values.usersAuthorizedKeysConsumer.image }}
+          imagePullPolicy: {{ .Values.usersAuthorizedKeysConsumer.imagePullPolicy }}
+          command: ["sh", "-c", "node consumer --constants.hosts=$FERO_WORKER_IP"]
+          env:
+            - name: DEBUG
+              value: '*'
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: POD_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: SIBLING_CONTAINER_NAME
+              value: rcci-git
       {{- if .Values.openssh.nodeSelector }}
       nodeSelector:
         # Node selectors can be important on mixed Windows/Linux clusters.

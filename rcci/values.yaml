@@ -41,3 +41,7 @@ api:
 httpCache:
   image: http-cache-consumer:latest
   imagePullPolicy: IfNotPresent
+
+usersAuthorizedKeysConsumer:
+  image: users-authorized-keys-consumer:latest
+  imagePullPolicy: IfNotPresent
